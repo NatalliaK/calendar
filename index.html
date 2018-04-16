@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.5.3/mocha.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.5.3/mocha.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.0.2/chai.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.min.js"></script>
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Calendar</title>
+</head>
+<body>
+<header>
+	<div>
+		<a href="">Календарь</a>
+		<a href="">Создать календарь</a>
+		<a href="">Обо мне</a>
+	</div>
+</header>
+<main>
+	<div id="calendar-header" class="calendar-header"></div>
+	<div id="calendar" class="calendar"></div>
+	<div id="result" class="result"></div>
+	<div id="mocha"></div>
+	<pre id="log"></pre>
+</main>
+<script>
+	mocha.setup('bdd');
+	var assert = chai.assert;
+</script>
+<script src ="js/calendar.js"></script>
+<script src="js/tests.js"></script>
+<script>
+	mocha.run();
+</script>
+</body>
+</html>
