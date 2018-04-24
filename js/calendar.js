@@ -74,7 +74,7 @@ function drawCalendar(year, month, htmlEl) {
 				if (!el) {
 					result += '<td class="calendar__cell"></td>';
 				} else {
-					result += '<td class="calendar__cell">' + el + '</td>';
+					result += '<td class="calendar__cell"><span data-day="'+ el + '" data-month="' + month + '" data-year="' + year + '">' + el + '</span></td>';
 				}
 			});
 			result += '</tr>';
@@ -149,26 +149,106 @@ drawInteractiveCalendar(calendar, currentYear, currentMonth, calendarHeader);
 
 calendar.addEventListener('click', function(e) {
 	var target = e.target;
-	if (target.tagName === 'TD' && target.innerHTML !== '') {
-		var selectMonth = date.toLocaleString('ru', { month: 'long' });
-		var selectYear = date.getFullYear();
-		// var p = document.createElement('p');
-		// res.appendChild(p);
-		// p.innerHTML =
-		// 	'Вы выбрали дату ' +
-		// 	selectMonth +
-		// 	' ' +
-		// 	target.innerHTML +
-		// 	', ' +
-		// 	selectYear +
-		// 	'.';
-		// setTimeout(getLocalStorage, 100);
-		// function getLocalStorage() {
-		// 	if (!localStorage.saveValue) {
-		// 		localStorage.saveValue = p.innerHTML + '</br>';
-		// 	} else {
-		// 		localStorage.saveValue += p.innerHTML + '</br>';
-		// 	}
-		// }
+	var targetData;
+	if (target.tagName === 'TD' && target.innerHTML !== '' || target.tagName === 'SPAN') {
+		var targetTd;
+		if (target.tagName === 'TD') {
+			targetData = target.querySelector('span');
+		} else targetData = target;
+		targetTd = targetData.parentNode;
+
+		askQuestion();
+
+		/** add task*/
+		document.querySelector('#addTask').addEventListener('click', function() {
+			var userTask = document.createElement('div'),
+				targetDay = targetData.getAttribute('data-day'),
+				targetMonth = targetData.getAttribute('data-month'),
+				targetYear = targetData.getAttribute('data-year'),
+				inputValue = document.querySelector('#task-input').value,
+				i,
+				keyName;
+
+			if (!inputValue) {
+				inputValue = 'Решать задачки';
+			}
+
+			if(!target.parentNode.querySelector('div')) {
+				var wrap = document.createElement('div');
+				wrap.className = 'user-tasks-wrap';
+				targetTd.appendChild(wrap);
+				i = 1;
+			} else {
+				var len = target.parentNode.querySelectorAll('[data-num]').length;
+				i = len + 1;
+			}
+			userTask.className = 'user-task';
+			userTask.setAttribute('data-num', i);
+			keyName = 'event' + userTask.getAttribute("data-num") + ' for day' + targetDay + ' month' + targetMonth + ' year' + targetYear;
+
+			waitFor(setLocalStorage, 10);
+
+			userTask.innerHTML = '<p class="user-task__p">' + inputValue + '</p><button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
+			targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
+
+			function setLocalStorage() {
+				localStorage.setItem(keyName, inputValue);
+			}
+
+			document.querySelector('#task').remove();
+		});
+
+		/**cancel task*/
+		document.querySelector('#cancelTask').addEventListener('click', function() {
+			document.querySelector('#task').remove();
+		});
+	}
+
+/** delete task*/
+	if (target.parentNode.hasAttribute('data-close')) {
+		var btnClose = target.parentNode;
+		var userTasks = btnClose.parentNode.parentNode;
+		var confirm = document.createElement('div');
+		confirm.id = 'confirm';
+		confirm.classList = 'task';
+		confirm.innerHTML = '<p class="task__p">Точно удалить задание?</p><p class="task__p">Может все-таки задачки порешаем?</p><button id="deleteTask" class="task__btn btn">Удалить</button><button id="cancelRemove" class="task__btn btn">Отмена</button>';
+		calendar.appendChild(confirm);
+
+		var deleteTask = document.querySelector('#deleteTask');
+		var cancelRemove = document.querySelector('#cancelRemove');
+
+		deleteTask.addEventListener('click', function() {
+			var parentDiv = btnClose.parentNode;
+			var keyName = 'event' + parentDiv.getAttribute('data-num') + ' for day' + parentDiv.getAttribute('data-day') + ' month' + parentDiv.getAttribute('data-month') + ' year' + parentDiv.getAttribute('data-year');
+			localStorage.removeItem(keyName);
+			parentDiv.remove();
+
+			if (userTasks.innerHTML === '') {
+				userTasks.remove();
+			}
+			confirm.remove();
+		});
+
+		cancelRemove.addEventListener('click', function() {
+			confirm.remove();
+		});
 	}
 });
+
+/**create modal box*/
+function askQuestion() {
+	var task = document.createElement('div');
+	task.id = 'task';
+	task.classList = 'task';
+	task.innerHTML = '<label><p class="task__p">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
+	calendar.appendChild(task);
+}
+
+function waitFor(func, delay) {
+	var res = func();
+	if (!res) {
+		setTimeout(function() {
+			func();
+		}, delay)
+	}
+}
