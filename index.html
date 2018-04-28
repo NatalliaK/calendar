@@ -13,14 +13,16 @@
 <body>
 <header class="header">
 	<div class="header__link-wrap">
-		<a href="" class="header__link">Календарь</a>
-		<a href="" class="header__link">Создать календарь</a>
-		<a href="" class="header__link">Обо мне</a>
+		<a href="#calendar" class="header__link">Календарь</a>
+		<a href="#createCalendar" class="header__link">Создать календарь</a>
+		<a href="#about" class="header__link">Обо мне</a>
 	</div>
 </header>
-<main>
+<main class="main">
 	<div id="calendar-header" class="calendar-header"></div>
 	<div id="calendar" class="calendar"></div>
+	<div id="createCalendar"></div>
+	<div id="about"></div>
 	<div id="result" class="result"></div>
 	<div id="mocha"></div>
 	<pre id="log"></pre>
@@ -30,6 +32,7 @@
 	var assert = chai.assert;
 </script>
 <script src ="js/calendar.js"></script>
+<script src="js/routes.js"></script>
 <script src="js/localStorage.js"></script>
 <script src="js/tests.js"></script>
 <script>
