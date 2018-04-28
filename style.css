@@ -1,5 +1,14 @@
+body {
+	position: relative;
+}
+
 .header {
-	margin: 30px 30px  50px;
+	position: absolute;
+	top: 30px;
+	left: 50%;
+	z-index: 3;
+
+	transform: translateX(-50%);
 }
 
 .header__link-wrap {
@@ -36,7 +45,7 @@
 
 .calendar-header__btn {
 	position: absolute;
-	top: -10px;
+	bottom: -13px;
 
 	border: none;
 	background-color: transparent;
@@ -193,6 +202,10 @@
 
 .user-task__btn > img {
 	width: 10px;
+}
+
+.main > div:first-child {
+	padding-top: 80px;
 }
 
 @font-face {
