@@ -1,9 +1,9 @@
-var calendar = document.querySelector('#calendar'),
-	calendarHeader = document.querySelector('#calendar-header'),
-	res = document.querySelector('#result'),
+var	res = document.querySelector('#result'),
 	date = new Date(),
 	currentMonth = date.getMonth() + 1,
-	currentYear = date.getFullYear();
+	currentYear = date.getFullYear(),
+	allowAddTasks,
+	allowRemoveTasks;
 
 res.innerHTML = localStorage.getItem('saveValue');
 
@@ -120,186 +120,260 @@ function writeMonthAndYear(year, month, htmlElHeader) {
     '</span><button data-btn="next" class="btn calendar-header__btn calendar-header__btn--next"><img src="./img/next.png" alt="next"></button>';
 }
 
-function getPrevMonth(htmlEl, month, year, htmlElHeader) {
+function getPrevMonth(htmlEl, month, year, htmlElHeader, value) {
   var prev = htmlElHeader.querySelector('button[data-btn="prev"]');
   prev.addEventListener('click', function() {
     --month;
-    if (month < 0) {
-      month = 11;
+    if (month < 1) {
+      month = 12;
       year -= 1;
     }
+
+    value.month = month;
+    value.year = year;
     date = new Date(year, month);
-    drawInteractiveCalendar(htmlEl, year, month, htmlElHeader);
+    //drawInteractiveCalendar(htmlEl, year, month, htmlElHeader);
+		drawInteractiveCalendar(value);
+		getLocalStorageValue();
     return date;
   });
 }
 
-function getNextMonth(htmlEl, month, year, htmlElHeader) {
+function getNextMonth(htmlEl, month, year, htmlElHeader, value) {
   var next = htmlElHeader.querySelector('button[data-btn="next"]');
   next.addEventListener('click', function() {
     ++month;
-    if (month > 11) {
-      month = 0;
+    if (month > 12) {
+      month = 1;
       year += 1;
     }
+		value.month = month;
+		value.year = year;
+
     date = new Date(year, month);
-    drawInteractiveCalendar(htmlEl, year, month, htmlElHeader);
+		drawInteractiveCalendar(value);
+		getLocalStorageValue();
     return date;
   });
 }
 
-function drawInteractiveCalendar(htmlEl, year, month, htmlElHeader) {
-  drawCalendar(year, month, htmlEl);
-  writeMonthAndYear(year, month, htmlElHeader);
-  getPrevMonth(htmlEl, month, year, htmlElHeader);
-  getNextMonth(htmlEl, month, year, htmlElHeader);
+function createCalendarHeader(htmlEl) {
+	var calendarHeader = document.createElement('div');
+	calendarHeader.id = 'calendar-header';
+	calendarHeader.classList = 'calendar-header';
+	htmlEl.insertAdjacentHTML('beforebegin', '<div id="calendar-header" class="calendar-header"></div>');
 }
 
-calendar.addEventListener('click', function(e) {
-  var target = e.target,
-  	targetData;
+function drawInteractiveCalendar(value) {
+	var htmlEl = value.el;
+	var year = value.year;
+	var month = value.month;
+	var changeMonth = value.changeMonth;
+	var displayData = value.displayData;
 
-  if (
-    (target.tagName === 'TD' && target.innerHTML !== '') ||
-    target.tagName === 'SPAN'
-  ) {
-    var targetTd;
-    if (target.tagName === 'TD') {
-      targetData = target.querySelector('span');
-    } else targetData = target;
-    targetTd = targetData.parentNode;
+	if (!year) {
+		year = currentYear;
+	}
 
-    askQuestion();
+	if (!month) {
+		month = currentMonth;
+	}
 
-    /** add task*/
-    document.querySelector('#addTask').addEventListener('click', function() {
-      var userTask = document.createElement('div'),
-        targetDay = targetData.getAttribute('data-day'),
-        targetMonth = targetData.getAttribute('data-month'),
-        targetYear = targetData.getAttribute('data-year'),
-        inputValue = document.querySelector('#task-input').value,
-        i,
-        keyName;
+	if (!document.querySelector('#calendar-header') && changeMonth || displayData) {
+		createCalendarHeader(htmlEl);
+	}
 
-      if (!inputValue) {
-        inputValue = 'Решать задачки';
-      }
+	var htmlElHeader = document.querySelector('#calendar-header');
+  drawCalendar(year, month, htmlEl);
 
-      if (!targetTd.querySelector('div')) {
-        var wrap = document.createElement('div');
-        wrap.className = 'user-tasks-wrap';
-        targetTd.appendChild(wrap);
-        i = 1;
-      } else {
-        var len = target.parentNode.querySelectorAll('[data-num]').length;
-        i = len + 1;
-      }
-      userTask.className = 'user-task';
-      userTask.setAttribute('data-num', i);
-      userTask.setAttribute('data-day', targetDay);
-      userTask.setAttribute('data-month', targetMonth);
-      userTask.setAttribute('data-year', targetYear);
-      keyName =
-        'event' +
-        userTask.getAttribute('data-num') +
-        ' for day' +
-        targetDay +
-        ' month' +
-        targetMonth +
-        ' year' +
-        targetYear;
+  if (displayData && !changeMonth) {
+		writeMonthAndYear(year, month, htmlElHeader);
+		var btn = htmlEl.parentNode.querySelectorAll('button');
+		btn.forEach(function(el) {
+			el.style.display = 'none';
+		});
+	} else if (changeMonth) {
+		writeMonthAndYear(year, month, htmlElHeader);
+		getPrevMonth(htmlEl, month, year, htmlElHeader, value);
+		getNextMonth(htmlEl, month, year, htmlElHeader, value);
+	} else {
+  	if (htmlElHeader) {
+			htmlElHeader.remove();
+		}
+	}
+	addEvent(value);
+}
 
-      function setLocalStorage() {
-      	return new Promise(function(resolve) {
-					setTimeout(function() {
-						localStorage.setItem(keyName, inputValue);
-						if (localStorage.getItem(keyName)) {
-							resolve();
-						}
-					}, 10);
-				});
-      }
+function addEvent(value) {
+	var htmlEl = value.el,
+		allowAddTasks = value.allowAdd,
+		allowRemoveTasks = value.allowRemove,
+		targetData,
+		targetTd;
 
-      setLocalStorage().then(function() {
-				userTask.innerHTML =
-					'<p class="user-task__p">' +
-					inputValue +
-					'</p><button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
-					targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
-			});
 
-      document.querySelector('#task').remove();
-    });
+	htmlEl.addEventListener('click', function(e) {
+		e.preventDefault();
+		if (allowAddTasks) {
+			var target = e.target;
 
-    /**cancel task*/
-    document.querySelector('#cancelTask').addEventListener('click', function() {
-      document.querySelector('#task').remove();
-    });
-  }
+			if (
+				(target.tagName === 'TD' && target.innerHTML !== '') ||
+				target.tagName === 'SPAN'
+			) {
+				if (target.tagName === 'TD') {
+					targetTd = target;
+					targetData = target.querySelector('span');
+				} else {
+					targetData = target;
+					targetTd = targetData.parentNode;
+				}
+				askQuestion(htmlEl);
+			}
 
-  /** delete task*/
-  if (target.parentNode.hasAttribute('data-close')) {
-    var btnClose = target.parentNode,
-    	userTasks = btnClose.parentNode.parentNode,
-    	confirm = document.createElement('div');
+			/** add task*/
+			if (target === htmlEl.querySelector('#addTask')) {
+				var targetDay = targetData.getAttribute('data-day'),
+					targetMonth = targetData.getAttribute('data-month'),
+					targetYear = targetData.getAttribute('data-year'),
+					inputValue = htmlEl.querySelector('#task-input').value,
+					i,
+					keyName;
 
-    confirm.id = 'confirm';
-    confirm.classList = 'task';
-    confirm.innerHTML =
-      '<p class="task__p">Точно удалить задание?</p><p class="task__p">Может все-таки задачки порешаем?</p><button id="deleteTask" class="task__btn btn">Удалить</button><button id="cancelRemove" class="task__btn btn">Отмена</button>';
-    calendar.appendChild(confirm);
+				if (!inputValue) {
+					inputValue = 'Решать задачки';
+				}
 
-    var deleteTask = document.querySelector('#deleteTask'),
-    	cancelRemove = document.querySelector('#cancelRemove');
-
-    deleteTask.addEventListener('click', function() {
-			var parentDiv = btnClose.parentNode,
+				if (!targetTd.querySelector('div')) {
+					var wrap = document.createElement('div');
+					wrap.className = 'user-tasks-wrap';
+					targetTd.appendChild(wrap);
+					i = 1;
+				} else {
+					var len = target.parentNode.querySelectorAll('[data-num]').length;
+					i = len + 1;
+				}
+				var userTask = document.createElement('div');
+				userTask.className = 'user-task';
+				userTask.setAttribute('data-num', i);
+				userTask.setAttribute('data-day', targetDay);
+				userTask.setAttribute('data-month', targetMonth);
+				userTask.setAttribute('data-year', targetYear);
 				keyName =
-				'event' +
-				parentDiv.getAttribute('data-num') +
-				' for day' +
-				parentDiv.getAttribute('data-day') +
-				' month' +
-				parentDiv.getAttribute('data-month') +
-				' year' +
-				parentDiv.getAttribute('data-year');
+					'event' +
+					userTask.getAttribute('data-num') +
+					' for day' +
+					targetDay +
+					' month' +
+					targetMonth +
+					' year' +
+					targetYear;
 
-			function delTask() {
-				return new Promise(function(resolve) {
-					setTimeout(function() {
-						localStorage.removeItem(keyName);
+				function setLocalStorage() {
+					return new Promise(function (resolve) {
+						setTimeout(function () {
+							localStorage.setItem(keyName, inputValue);
+							if (localStorage.getItem(keyName)) {
+								resolve();
+							}
+						}, 10);
+					});
+				}
 
-						if(!localStorage.getItem(keyName)) {
-							resolve();
-						}
-					}, 10);
-			})
+				setLocalStorage().then(function () {
+					userTask.innerHTML =
+						'<p class="user-task__p">' +
+						inputValue +
+						'</p>';
+					targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
+
+					if (allowRemoveTasks) {
+						userTask.innerHTML += '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
+					}
+				});
+
+				document.querySelector('#task').remove();
+			}
 		}
 
-			delTask().then(function() {
-				parentDiv.remove();
+		/**cancel task*/
+		if (target === htmlEl.querySelector('#cancelTask')) {
+			htmlEl.querySelector('#task').remove();
+		}
 
-				if (userTasks.innerHTML === '') {
-					userTasks.remove();
+		/** delete task*/
+		if (target && target.parentNode.hasAttribute('data-close') && allowRemoveTasks) {
+			if (!htmlEl.querySelector('#confirm') && target.parentNode.hasAttribute('data-close')) {
+				var btnClose = target.parentNode,
+					confirm = document.createElement('div');
+
+				userTask = btnClose.parentNode;
+
+				confirm.id = 'confirm';
+				confirm.classList = 'task';
+				confirm.setAttribute('data-num', userTask.getAttribute('data-num'));
+				confirm.setAttribute('data-day', userTask.getAttribute('data-day'));
+				confirm.setAttribute('data-month', userTask.getAttribute('data-month'));
+				confirm.setAttribute('data-year', userTask.getAttribute('data-year'));
+				confirm.innerHTML =
+					'<p class="task__p">Точно удалить задание?</p><p class="task__p">Может все-таки задачки порешаем?</p><button id="deleteTask" class="task__btn btn">Удалить</button><button id="cancelRemove" class="task__btn btn">Отмена</button>';
+				htmlEl.appendChild(confirm);
+			}
+		}
+
+			if (target === htmlEl.querySelector('#deleteTask')) {
+			var parentDiv = target.parentNode;
+				keyName =
+					'event' +
+					parentDiv.getAttribute('data-num') +
+					' for day' +
+					parentDiv.getAttribute('data-day') +
+					' month' +
+					parentDiv.getAttribute('data-month') +
+					' year' +
+					parentDiv.getAttribute('data-year');
+
+				function delTask() {
+					return new Promise(function(resolve) {
+						setTimeout(function() {
+							localStorage.removeItem(keyName);
+
+							if(!localStorage.getItem(keyName)) {
+								resolve();
+							}
+						}, 10);
+					})
 				}
-				confirm.remove();
-			});
-		});
 
-		cancelRemove.addEventListener('click', function() {
-			confirm.remove();
-		});
-	}
-});
+				delTask().then(function() {
+					var el = htmlEl.querySelector('div[data-num="' + parentDiv.getAttribute('data-num') + '"][data-month="' + parentDiv.getAttribute('data-month') + '"][data-day="' + parentDiv.getAttribute('data-day') + '"][data-year="' + parentDiv.getAttribute('data-year') + '"]');
+					var parentEl = el.parentNode;
+
+					el.remove();
+
+					if (parentEl.innerHTML === '') {
+						parentEl.remove();
+					}
+				});
+				parentDiv.remove();
+			}
+
+		if (target === htmlEl.querySelector('#cancelRemove')) {
+			htmlEl.querySelector('#confirm').remove();
+		}
+	});
+}
 
 /**create modal box*/
-function askQuestion() {
-  var task = document.createElement('div');
+function askQuestion(htmlEl) {
+	if (!htmlEl.querySelector('#task')) {
+		var task = document.createElement('div');
 
-  task.id = 'task';
-  task.classList = 'task';
-  task.innerHTML =
-    '<label><p class="task__p">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
-  calendar.appendChild(task);
+		task.id = 'task';
+		task.classList = 'task';
+		task.innerHTML =
+			'<label><p class="task__p">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
+		htmlEl.appendChild(task);
+	}
 }
 

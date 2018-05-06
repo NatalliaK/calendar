@@ -2,12 +2,11 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.5.3/mocha.css">
-	<link rel="stylesheet" href="style.css">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/mocha/3.5.3/mocha.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/chai/4.0.2/chai.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/sinon.js/1.15.4/sinon.min.js"></script>
-	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<link rel="stylesheet" href="style/header.css">
+	<link rel="stylesheet" href="style/calendar.css">
+	<link rel="stylesheet" href="style/task.css">
+	<link rel="stylesheet" href="style/create-calendar.css">
+	<link rel="stylesheet" href="style/output.css">
 	<title>Calendar</title>
 </head>
 <body>
@@ -19,24 +18,26 @@
 	</div>
 </header>
 <main class="main">
-	<div id="calendar-header" class="calendar-header"></div>
 	<div id="calendar" class="calendar"></div>
-	<div id="createCalendar"></div>
+	<div id="createCalendar" class="create-calendar"></div>
 	<div id="about"></div>
 	<div id="result" class="result"></div>
 	<div id="mocha"></div>
 	<pre id="log"></pre>
 </main>
-<script>
-	mocha.setup('bdd');
-	var assert = chai.assert;
-</script>
+<!--<script>-->
+	<!--mocha.setup('bdd');-->
+	<!--var assert = chai.assert;-->
+<!--</script>-->
 <script src ="js/calendar.js"></script>
-<script src="js/routes.js"></script>
+<script src="js/createCalendar.js"></script>
+<script src="js/selectedData.js"></script>
+<script src="js/settingsCalendar.js"></script>
 <script src="js/localStorage.js"></script>
-<script src="js/tests.js"></script>
-<script>
-	mocha.run();
-</script>
+<script src="js/routes.js"></script>
+<!--<script src="js/tests.js"></script>-->
+<!--<script>-->
+	<!--mocha.run();-->
+<!--</script>-->
 </body>
 </html>
