@@ -2,59 +2,59 @@ var calendar = document.querySelector('#calendar');
 
 var routes = {
   '': function() {
-		document.querySelector('#createCalendar').innerHTML = '';
-		document.querySelector('#about').innerHTML = '';
+    document.querySelector('#createCalendar').innerHTML = '';
+    document.querySelector('#about').innerHTML = '';
 
-		var value = {
-			el: calendar,
-			changeMonth: true,
-			allowAdd: true,
-			allowRemove: true,
-			year: currentYear,
-			month: currentMonth
-		};
+    var value = {
+      el: calendar,
+      changeMonth: true,
+      allowAdd: true,
+      allowRemove: true,
+      year: currentYear,
+      month: currentMonth
+    };
 
-		drawInteractiveCalendar(value);
-		getLocalStorageValue();
+    drawInteractiveCalendar(value);
+    getLocalStorageValue();
   },
   calendar: function() {
-		document.querySelector('#createCalendar').innerHTML = '';
-		document.querySelector('#about').innerHTML = '';
+    document.querySelector('#createCalendar').innerHTML = '';
+    document.querySelector('#about').innerHTML = '';
 
-		var value = {
-			el: calendar,
-			changeMonth: true,
-			allowAdd: true,
-			allowRemove: true,
-			year: currentYear,
-			month: currentMonth
-		};
+    var value = {
+      el: calendar,
+      changeMonth: true,
+      allowAdd: true,
+      allowRemove: true,
+      year: currentYear,
+      month: currentMonth
+    };
 
-		drawInteractiveCalendar(value);
-		getLocalStorageValue();
+    drawInteractiveCalendar(value);
+    getLocalStorageValue();
   },
   createCalendar: function() {
     calendar.innerHTML = '';
 
     if (document.querySelector('#calendar-header')) {
-			document.querySelector('#calendar-header').remove();
-		}
+      document.querySelector('#calendar-header').remove();
+    }
 
     document.querySelector('#about').innerHTML = '';
 
-		createForm();
-		selectedData();
-		settingsCalendar();
+    createForm();
+    selectedData();
+    settingsCalendar();
   },
   about: function() {
-    document.querySelector('#about').innerHTML = 'about';
     calendar.innerHTML = '';
 
-		if (document.querySelector('#calendar-header')) {
-			document.querySelector('#calendar-header').remove();
-		}
+    if (document.querySelector('#calendar-header')) {
+      document.querySelector('#calendar-header').remove();
+    }
 
-		document.querySelector('#createCalendar').innerHTML = '';
+    document.querySelector('#createCalendar').innerHTML = '';
+    aboutMe();
   }
 };
 

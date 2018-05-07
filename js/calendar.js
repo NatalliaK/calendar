@@ -1,9 +1,9 @@
-var	res = document.querySelector('#result'),
-	date = new Date(),
-	currentMonth = date.getMonth() + 1,
-	currentYear = date.getFullYear(),
-	allowAddTasks,
-	allowRemoveTasks;
+var res = document.querySelector('#result'),
+  date = new Date(),
+  currentMonth = date.getMonth() + 1,
+  currentYear = date.getFullYear(),
+  allowAddTasks,
+  allowRemoveTasks;
 
 res.innerHTML = localStorage.getItem('saveValue');
 
@@ -133,8 +133,8 @@ function getPrevMonth(htmlEl, month, year, htmlElHeader, value) {
     value.year = year;
     date = new Date(year, month);
     //drawInteractiveCalendar(htmlEl, year, month, htmlElHeader);
-		drawInteractiveCalendar(value);
-		getLocalStorageValue();
+    drawInteractiveCalendar(value);
+    getLocalStorageValue();
     return date;
   });
 }
@@ -147,233 +147,252 @@ function getNextMonth(htmlEl, month, year, htmlElHeader, value) {
       month = 1;
       year += 1;
     }
-		value.month = month;
-		value.year = year;
+    value.month = month;
+    value.year = year;
 
     date = new Date(year, month);
-		drawInteractiveCalendar(value);
-		getLocalStorageValue();
+    drawInteractiveCalendar(value);
+    getLocalStorageValue();
     return date;
   });
 }
 
 function createCalendarHeader(htmlEl) {
-	var calendarHeader = document.createElement('div');
-	calendarHeader.id = 'calendar-header';
-	calendarHeader.classList = 'calendar-header';
-	htmlEl.insertAdjacentHTML('beforebegin', '<div id="calendar-header" class="calendar-header"></div>');
+  var calendarHeader = document.createElement('div');
+  calendarHeader.id = 'calendar-header';
+  calendarHeader.classList = 'calendar-header';
+  htmlEl.insertAdjacentHTML(
+    'beforebegin',
+    '<div id="calendar-header" class="calendar-header"></div>'
+  );
 }
 
 function drawInteractiveCalendar(value) {
-	var htmlEl = value.el;
-	var year = value.year;
-	var month = value.month;
-	var changeMonth = value.changeMonth;
-	var displayData = value.displayData;
+  var htmlEl = value.el;
+  var year = value.year;
+  var month = value.month;
+  var changeMonth = value.changeMonth;
+  var displayData = value.displayData;
 
-	if (!year) {
-		year = currentYear;
-	}
+  if (!year) {
+    year = currentYear;
+  }
 
-	if (!month) {
-		month = currentMonth;
-	}
+  if (!month) {
+    month = currentMonth;
+  }
 
-	if (!document.querySelector('#calendar-header') && changeMonth || displayData) {
-		createCalendarHeader(htmlEl);
-	}
+  if (
+    (!document.querySelector('#calendar-header') && changeMonth) ||
+    displayData
+  ) {
+    createCalendarHeader(htmlEl);
+  }
 
-	var htmlElHeader = document.querySelector('#calendar-header');
+  var htmlElHeader = document.querySelector('#calendar-header');
   drawCalendar(year, month, htmlEl);
 
   if (displayData && !changeMonth) {
-		writeMonthAndYear(year, month, htmlElHeader);
-		var btn = htmlEl.parentNode.querySelectorAll('button');
-		btn.forEach(function(el) {
-			el.style.display = 'none';
-		});
-	} else if (changeMonth) {
-		writeMonthAndYear(year, month, htmlElHeader);
-		getPrevMonth(htmlEl, month, year, htmlElHeader, value);
-		getNextMonth(htmlEl, month, year, htmlElHeader, value);
-	} else {
-  	if (htmlElHeader) {
-			htmlElHeader.remove();
-		}
-	}
-	addEvent(value);
+    writeMonthAndYear(year, month, htmlElHeader);
+    var btn = htmlEl.parentNode.querySelectorAll('button');
+    btn.forEach(function(el) {
+      el.style.display = 'none';
+    });
+  } else if (changeMonth) {
+    writeMonthAndYear(year, month, htmlElHeader);
+    getPrevMonth(htmlEl, month, year, htmlElHeader, value);
+    getNextMonth(htmlEl, month, year, htmlElHeader, value);
+  } else {
+    if (htmlElHeader) {
+      htmlElHeader.remove();
+    }
+  }
+  addEvent(value);
 }
 
 function addEvent(value) {
-	var htmlEl = value.el,
-		allowAddTasks = value.allowAdd,
-		allowRemoveTasks = value.allowRemove,
-		targetData,
-		targetTd;
+  var htmlEl = value.el,
+    allowAddTasks = value.allowAdd,
+    allowRemoveTasks = value.allowRemove,
+    targetData,
+    targetTd;
 
+  htmlEl.addEventListener('click', function(e) {
+    e.preventDefault();
+    if (allowAddTasks) {
+      var target = e.target;
 
-	htmlEl.addEventListener('click', function(e) {
-		e.preventDefault();
-		if (allowAddTasks) {
-			var target = e.target;
+      if (
+        (target.tagName === 'TD' && target.innerHTML !== '') ||
+        target.tagName === 'SPAN'
+      ) {
+        if (target.tagName === 'TD') {
+          targetTd = target;
+          targetData = target.querySelector('span');
+        } else {
+          targetData = target;
+          targetTd = targetData.parentNode;
+        }
+        askQuestion(htmlEl);
+      }
 
-			if (
-				(target.tagName === 'TD' && target.innerHTML !== '') ||
-				target.tagName === 'SPAN'
-			) {
-				if (target.tagName === 'TD') {
-					targetTd = target;
-					targetData = target.querySelector('span');
-				} else {
-					targetData = target;
-					targetTd = targetData.parentNode;
-				}
-				askQuestion(htmlEl);
-			}
+      /** add task*/
+      if (target === htmlEl.querySelector('#addTask')) {
+        var targetDay = targetData.getAttribute('data-day'),
+          targetMonth = targetData.getAttribute('data-month'),
+          targetYear = targetData.getAttribute('data-year'),
+          inputValue = htmlEl.querySelector('#task-input').value,
+          i,
+          keyName;
 
-			/** add task*/
-			if (target === htmlEl.querySelector('#addTask')) {
-				var targetDay = targetData.getAttribute('data-day'),
-					targetMonth = targetData.getAttribute('data-month'),
-					targetYear = targetData.getAttribute('data-year'),
-					inputValue = htmlEl.querySelector('#task-input').value,
-					i,
-					keyName;
+        if (!inputValue) {
+          inputValue = 'Решать задачки';
+        }
 
-				if (!inputValue) {
-					inputValue = 'Решать задачки';
-				}
+        if (!targetTd.querySelector('div')) {
+          var wrap = document.createElement('div');
+          wrap.className = 'user-tasks-wrap';
+          targetTd.appendChild(wrap);
+          i = 1;
+        } else {
+          var len = target.parentNode.querySelectorAll('[data-num]').length;
+          i = len + 1;
+        }
+        var userTask = document.createElement('div');
+        userTask.className = 'user-task';
+        userTask.setAttribute('data-num', i);
+        userTask.setAttribute('data-day', targetDay);
+        userTask.setAttribute('data-month', targetMonth);
+        userTask.setAttribute('data-year', targetYear);
+        keyName =
+          'event' +
+          userTask.getAttribute('data-num') +
+          ' for day' +
+          targetDay +
+          ' month' +
+          targetMonth +
+          ' year' +
+          targetYear;
 
-				if (!targetTd.querySelector('div')) {
-					var wrap = document.createElement('div');
-					wrap.className = 'user-tasks-wrap';
-					targetTd.appendChild(wrap);
-					i = 1;
-				} else {
-					var len = target.parentNode.querySelectorAll('[data-num]').length;
-					i = len + 1;
-				}
-				var userTask = document.createElement('div');
-				userTask.className = 'user-task';
-				userTask.setAttribute('data-num', i);
-				userTask.setAttribute('data-day', targetDay);
-				userTask.setAttribute('data-month', targetMonth);
-				userTask.setAttribute('data-year', targetYear);
-				keyName =
-					'event' +
-					userTask.getAttribute('data-num') +
-					' for day' +
-					targetDay +
-					' month' +
-					targetMonth +
-					' year' +
-					targetYear;
+        function setLocalStorage() {
+          return new Promise(function(resolve) {
+            setTimeout(function() {
+              localStorage.setItem(keyName, inputValue);
+              if (localStorage.getItem(keyName)) {
+                resolve();
+              }
+            }, 10);
+          });
+        }
 
-				function setLocalStorage() {
-					return new Promise(function (resolve) {
-						setTimeout(function () {
-							localStorage.setItem(keyName, inputValue);
-							if (localStorage.getItem(keyName)) {
-								resolve();
-							}
-						}, 10);
-					});
-				}
+        setLocalStorage().then(function() {
+          userTask.innerHTML = '<p class="user-task__p">' + inputValue + '</p>';
+          targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
 
-				setLocalStorage().then(function () {
-					userTask.innerHTML =
-						'<p class="user-task__p">' +
-						inputValue +
-						'</p>';
-					targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
+          if (allowRemoveTasks) {
+            userTask.innerHTML +=
+              '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
+          }
+        });
 
-					if (allowRemoveTasks) {
-						userTask.innerHTML += '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
-					}
-				});
+        document.querySelector('#task').remove();
+      }
+    }
 
-				document.querySelector('#task').remove();
-			}
-		}
+    /**cancel task*/
+    if (target === htmlEl.querySelector('#cancelTask')) {
+      htmlEl.querySelector('#task').remove();
+    }
 
-		/**cancel task*/
-		if (target === htmlEl.querySelector('#cancelTask')) {
-			htmlEl.querySelector('#task').remove();
-		}
+    /** delete task*/
+    if (
+      target &&
+      target.parentNode.hasAttribute('data-close') &&
+      allowRemoveTasks
+    ) {
+      if (
+        !htmlEl.querySelector('#confirm') &&
+        target.parentNode.hasAttribute('data-close')
+      ) {
+        var btnClose = target.parentNode,
+          confirm = document.createElement('div');
 
-		/** delete task*/
-		if (target && target.parentNode.hasAttribute('data-close') && allowRemoveTasks) {
-			if (!htmlEl.querySelector('#confirm') && target.parentNode.hasAttribute('data-close')) {
-				var btnClose = target.parentNode,
-					confirm = document.createElement('div');
+        userTask = btnClose.parentNode;
 
-				userTask = btnClose.parentNode;
+        confirm.id = 'confirm';
+        confirm.classList = 'task';
+        confirm.setAttribute('data-num', userTask.getAttribute('data-num'));
+        confirm.setAttribute('data-day', userTask.getAttribute('data-day'));
+        confirm.setAttribute('data-month', userTask.getAttribute('data-month'));
+        confirm.setAttribute('data-year', userTask.getAttribute('data-year'));
+        confirm.innerHTML =
+          '<p class="task__p">Точно удалить задание?</p><p class="task__p">Может все-таки задачки порешаем?</p><button id="deleteTask" class="task__btn btn">Удалить</button><button id="cancelRemove" class="task__btn btn">Отмена</button>';
+        htmlEl.appendChild(confirm);
+      }
+    }
 
-				confirm.id = 'confirm';
-				confirm.classList = 'task';
-				confirm.setAttribute('data-num', userTask.getAttribute('data-num'));
-				confirm.setAttribute('data-day', userTask.getAttribute('data-day'));
-				confirm.setAttribute('data-month', userTask.getAttribute('data-month'));
-				confirm.setAttribute('data-year', userTask.getAttribute('data-year'));
-				confirm.innerHTML =
-					'<p class="task__p">Точно удалить задание?</p><p class="task__p">Может все-таки задачки порешаем?</p><button id="deleteTask" class="task__btn btn">Удалить</button><button id="cancelRemove" class="task__btn btn">Отмена</button>';
-				htmlEl.appendChild(confirm);
-			}
-		}
+    if (target === htmlEl.querySelector('#deleteTask')) {
+      var parentDiv = target.parentNode;
+      keyName =
+        'event' +
+        parentDiv.getAttribute('data-num') +
+        ' for day' +
+        parentDiv.getAttribute('data-day') +
+        ' month' +
+        parentDiv.getAttribute('data-month') +
+        ' year' +
+        parentDiv.getAttribute('data-year');
 
-			if (target === htmlEl.querySelector('#deleteTask')) {
-			var parentDiv = target.parentNode;
-				keyName =
-					'event' +
-					parentDiv.getAttribute('data-num') +
-					' for day' +
-					parentDiv.getAttribute('data-day') +
-					' month' +
-					parentDiv.getAttribute('data-month') +
-					' year' +
-					parentDiv.getAttribute('data-year');
+      function delTask() {
+        return new Promise(function(resolve) {
+          setTimeout(function() {
+            localStorage.removeItem(keyName);
 
-				function delTask() {
-					return new Promise(function(resolve) {
-						setTimeout(function() {
-							localStorage.removeItem(keyName);
+            if (!localStorage.getItem(keyName)) {
+              resolve();
+            }
+          }, 10);
+        });
+      }
 
-							if(!localStorage.getItem(keyName)) {
-								resolve();
-							}
-						}, 10);
-					})
-				}
+      delTask().then(function() {
+        var el = htmlEl.querySelector(
+          'div[data-num="' +
+            parentDiv.getAttribute('data-num') +
+            '"][data-month="' +
+            parentDiv.getAttribute('data-month') +
+            '"][data-day="' +
+            parentDiv.getAttribute('data-day') +
+            '"][data-year="' +
+            parentDiv.getAttribute('data-year') +
+            '"]'
+        );
+        var parentEl = el.parentNode;
 
-				delTask().then(function() {
-					var el = htmlEl.querySelector('div[data-num="' + parentDiv.getAttribute('data-num') + '"][data-month="' + parentDiv.getAttribute('data-month') + '"][data-day="' + parentDiv.getAttribute('data-day') + '"][data-year="' + parentDiv.getAttribute('data-year') + '"]');
-					var parentEl = el.parentNode;
+        el.remove();
 
-					el.remove();
+        if (parentEl.innerHTML === '') {
+          parentEl.remove();
+        }
+      });
+      parentDiv.remove();
+    }
 
-					if (parentEl.innerHTML === '') {
-						parentEl.remove();
-					}
-				});
-				parentDiv.remove();
-			}
-
-		if (target === htmlEl.querySelector('#cancelRemove')) {
-			htmlEl.querySelector('#confirm').remove();
-		}
-	});
+    if (target === htmlEl.querySelector('#cancelRemove')) {
+      htmlEl.querySelector('#confirm').remove();
+    }
+  });
 }
 
 /**create modal box*/
 function askQuestion(htmlEl) {
-	if (!htmlEl.querySelector('#task')) {
-		var task = document.createElement('div');
+  if (!htmlEl.querySelector('#task')) {
+    var task = document.createElement('div');
 
-		task.id = 'task';
-		task.classList = 'task';
-		task.innerHTML =
-			'<label><p class="task__p">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
-		htmlEl.appendChild(task);
-	}
+    task.id = 'task';
+    task.classList = 'task';
+    task.innerHTML =
+      '<label><p class="task__p">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
+    htmlEl.appendChild(task);
+  }
 }
-
