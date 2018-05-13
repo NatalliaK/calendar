@@ -59,6 +59,12 @@
 	 color: #364609;
  }
 
+.preview-calendar {
+	position: relative;
+
+	margin: 0 auto 40px;
+}
+
 @font-face {
 	font-family: "ElMessiri-SemiBold";
 	src: url("../fonts/ElMessiri-SemiBold.ttf");
