@@ -1,18 +1,23 @@
 function getLocalStorageValue() {
   for (var i = 0; i < localStorage.length; i++) {
     var key = localStorage.key(i),
-      arr = key.match(/\d+/g),
-      event = arr[0],
-      day = arr[1],
-      month = arr[2],
-      year = arr[3],
+			el = key.match(/calendar\d*/gi)[0],
+      ev = key.match(/event\d+/gi)[0].replace(/event/, ''),
+      day = key.match(/day\d+/gi)[0].replace(/day/, ''),
+      month = key.match(/month\d+/gi)[0].replace(/month/, ''),
+      year = key.match(/year\d+/gi)[0].replace(/year/, ''),
       allDay = calendar.querySelectorAll('span[data-day]');
 
-    allDay.forEach(function(el) {
+		if (!document.getElementById(el)) {
+			localStorage.removeItem(key);
+		}
+
+    allDay.forEach(function(elem) {
       if (
-        year === el.getAttribute('data-year') &&
-        month === el.getAttribute('data-month') &&
-        day === el.getAttribute('data-day')
+      	el === elem.getAttribute('data-el') &&
+        year === elem.getAttribute('data-year') &&
+        month === elem.getAttribute('data-month') &&
+        day === elem.getAttribute('data-day')
       ) {
         function valueLocStorage(key) {
           return new Promise(function(resolve) {
@@ -26,7 +31,7 @@ function getLocalStorageValue() {
           });
         }
 
-        var td = el.parentNode,
+        var td = elem.parentNode,
           userTask = document.createElement('div'),
           wrap;
 
@@ -39,7 +44,8 @@ function getLocalStorageValue() {
         }
 
         userTask.className = 'user-task';
-        userTask.setAttribute('data-num', event);
+        userTask.setAttribute('data-el', el);
+        userTask.setAttribute('data-num', ev);
         userTask.setAttribute('data-day', day);
         userTask.setAttribute('data-month', month);
         userTask.setAttribute('data-year', year);

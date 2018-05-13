@@ -16,6 +16,7 @@ function settingsCalendar() {
 
   form.addEventListener('change', function(e) {
     e.preventDefault();
+    previewCalendar.innerHTML = '';
     var target = e.target,
       parentNode = e.target.parentNode,
       selectMonth = parentNode.querySelector('select[name="month"]'),
@@ -87,9 +88,10 @@ function settingsCalendar() {
   drawPrevCalendar(value);
 
   function drawPrevCalendar(value) {
-    value.el = previewCalendar;
+		previewCalendar.innerHTML = '<div id="' + value.el + '">';
     drawInteractiveCalendar(value);
-    document.querySelector('.calendar__table').className =
+    console.log(document.getElementById(value.el).firstElementChild);
+    document.getElementById(value.el).firstElementChild.className =
       'calendar__table calendar__table--big';
   }
 

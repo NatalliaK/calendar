@@ -76,7 +76,7 @@ function drawCalendar(year, month, htmlEl) {
           result += '<td class="calendar__cell"></td>';
         } else {
           result +=
-            '<td class="calendar__cell"><span data-day="' +
+            '<td class="calendar__cell"><span data-el="' + htmlEl.id + '" data-day="' +
             el +
             '" data-month="' +
             month +
@@ -132,7 +132,6 @@ function getPrevMonth(htmlEl, month, year, htmlElHeader, value) {
     value.month = month;
     value.year = year;
     date = new Date(year, month);
-    //drawInteractiveCalendar(htmlEl, year, month, htmlElHeader);
     drawInteractiveCalendar(value);
     getLocalStorageValue();
     return date;
@@ -149,6 +148,7 @@ function getNextMonth(htmlEl, month, year, htmlElHeader, value) {
     }
     value.month = month;
     value.year = year;
+    console.log(htmlEl);
 
     date = new Date(year, month);
     drawInteractiveCalendar(value);
@@ -168,7 +168,7 @@ function createCalendarHeader(htmlEl) {
 }
 
 function drawInteractiveCalendar(value) {
-  var htmlEl = value.el;
+  var htmlEl = document.getElementById(value.el) || value.el;
   var year = value.year;
   var month = value.month;
   var changeMonth = value.changeMonth;
@@ -211,7 +211,7 @@ function drawInteractiveCalendar(value) {
 }
 
 function addEvent(value) {
-  var htmlEl = value.el,
+  var htmlEl = document.getElementById(value.el) || value.el,
     allowAddTasks = value.allowAdd,
     allowRemoveTasks = value.allowRemove,
     targetData,
@@ -241,6 +241,7 @@ function addEvent(value) {
         var targetDay = targetData.getAttribute('data-day'),
           targetMonth = targetData.getAttribute('data-month'),
           targetYear = targetData.getAttribute('data-year'),
+					targetEl = targetData.getAttribute('data-el'),
           inputValue = htmlEl.querySelector('#task-input').value,
           i,
           keyName;
@@ -255,7 +256,8 @@ function addEvent(value) {
           targetTd.appendChild(wrap);
           i = 1;
         } else {
-          var len = target.parentNode.querySelectorAll('[data-num]').length;
+					console.log(targetData);
+          var len = targetData.parentNode.querySelectorAll('[data-num]').length;
           i = len + 1;
         }
         var userTask = document.createElement('div');
@@ -264,9 +266,12 @@ function addEvent(value) {
         userTask.setAttribute('data-day', targetDay);
         userTask.setAttribute('data-month', targetMonth);
         userTask.setAttribute('data-year', targetYear);
+				userTask.setAttribute('data-el', targetEl);
         keyName =
-          'event' +
-          userTask.getAttribute('data-num') +
+					'id' +
+					targetEl +
+          ' event' +
+          i +
           ' for day' +
           targetDay +
           ' month' +
@@ -294,7 +299,6 @@ function addEvent(value) {
               '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
           }
         });
-
         document.querySelector('#task').remove();
       }
     }
@@ -321,6 +325,8 @@ function addEvent(value) {
 
         confirm.id = 'confirm';
         confirm.classList = 'task';
+        console.log(userTask);
+        confirm.setAttribute('data-el', userTask.getAttribute('data-el'));
         confirm.setAttribute('data-num', userTask.getAttribute('data-num'));
         confirm.setAttribute('data-day', userTask.getAttribute('data-day'));
         confirm.setAttribute('data-month', userTask.getAttribute('data-month'));
@@ -334,7 +340,9 @@ function addEvent(value) {
     if (target === htmlEl.querySelector('#deleteTask')) {
       var parentDiv = target.parentNode;
       keyName =
-        'event' +
+				'id' +
+				parentDiv.getAttribute('data-el') +
+        ' event' +
         parentDiv.getAttribute('data-num') +
         ' for day' +
         parentDiv.getAttribute('data-day') +
@@ -357,7 +365,9 @@ function addEvent(value) {
 
       delTask().then(function() {
         var el = htmlEl.querySelector(
-          'div[data-num="' +
+          'div[data-el="' +
+					parentDiv.getAttribute('data-el') +
+					'"][data-num="' +
             parentDiv.getAttribute('data-num') +
             '"][data-month="' +
             parentDiv.getAttribute('data-month') +
@@ -381,7 +391,7 @@ function addEvent(value) {
     if (target === htmlEl.querySelector('#cancelRemove')) {
       htmlEl.querySelector('#confirm').remove();
     }
-  });
+  }.bind(value));
 }
 
 /**create modal box*/
