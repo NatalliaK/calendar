@@ -88,16 +88,15 @@ function settingsCalendar() {
   drawPrevCalendar(value);
 
   function drawPrevCalendar(value) {
-		previewCalendar.innerHTML = '<div id="' + value.el + '">';
+    previewCalendar.innerHTML = '<div id="' + value.el + '">';
     drawInteractiveCalendar(value);
-    console.log(document.getElementById(value.el).firstElementChild);
     document.getElementById(value.el).firstElementChild.className =
       'calendar__table calendar__table--big';
   }
 
   function setScript(value) {
     document.querySelector('#output').innerText =
-      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script><script src="https://github.com/NatalliaK/calendar/blob/master/js/localStorage.js"></script><script >\n(function(){\n var id = ' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script><script src="https://github.com/NatalliaK/calendar/blob/master/js/localStorage.js"></script><script >\n(function(){\n var id = "' +
       value.el +
       "; \n document.write('<div id=\"' + id + '\"></div>');\n" +
       '\t\t\t  new drawInteractiveCalendar({\n' +
