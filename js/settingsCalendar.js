@@ -96,9 +96,14 @@ function settingsCalendar() {
 
   function setScript(value) {
     document.querySelector('#output').innerText =
-      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script><script src="https://github.com/NatalliaK/calendar/blob/master/js/localStorage.js"></script><script >\n(function(){\n var id = "' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/localStorage.js"></script>\n' +
+      '<script >\n' +
+      '(function()\n' +
+      '{var id = "' +
       value.el +
-      "; \n document.write('<div id=\"' + id + '\"></div>');\n" +
+      '";\n' +
+      ' document.write(\'<div id=" + id + "></div>);\n' +
       '\t\t\t  new drawInteractiveCalendar({\n' +
       '\t\t\t    el: ' +
       value.el +
@@ -117,7 +122,8 @@ function settingsCalendar() {
       ',\n' +
       '\t\t\t		 year: ' +
       value.year +
-      ',\n' +
-      '\t\t\t  })})()</script>';
+      '\n' +
+      '\t\t\t  })})();\n' +
+      '</script>';
   }
 }
