@@ -103,7 +103,7 @@ function settingsCalendar() {
 			'var id = "' +
       value.el +
       '";\n' +
-      ' document.write("<div id=' + id + '></div>");\n' +
+      ' document.write("<div id=" + id + "></div>");\n' +
       '\t\t\t  new drawInteractiveCalendar({\n' +
       '\t\t\t    el: ' +
       value.el +
@@ -117,6 +117,9 @@ function settingsCalendar() {
       '\t\t\t    allowRemove: ' +
       value.allowRemove +
       ',\n' +
+			'\t\t\t    displayData: ' +
+			value.displayData +
+			',\n' +
       '\t\t\t    month: ' +
       value.month +
       ',\n' +
