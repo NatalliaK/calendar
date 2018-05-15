@@ -99,11 +99,11 @@ function settingsCalendar() {
       '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
       '<script src="https://github.com/NatalliaK/calendar/blob/master/js/localStorage.js"></script>\n' +
       '<script >\n' +
-      '(function()\n' +
-      '{var id = "' +
+      '(function(){\n' +
+			'var id = "' +
       value.el +
       '";\n' +
-      ' document.write(\'<div id=" + id + "></div>);\n' +
+      ' document.write("<div id=' + id + '></div>");\n' +
       '\t\t\t  new drawInteractiveCalendar({\n' +
       '\t\t\t    el: ' +
       value.el +
