@@ -179,9 +179,7 @@ function drawInteractiveCalendar(value) {
 
   var id = htmlEl.id + '-header';
   if (
-    (!document.getElementById(htmlEl.id + '-header') && changeMonth) ||
-    displayData
-  ) {
+    (!document.getElementById(htmlEl.id + '-header') && changeMonth) || !document.getElementById(htmlEl.id + '-header') && displayData) {
     createCalendarHeader(htmlEl);
   }
 

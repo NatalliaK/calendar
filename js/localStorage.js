@@ -6,7 +6,7 @@ function getLocalStorageValue() {
       day = key.match(/day\d+/gi)[0].replace(/day/, ''),
       month = key.match(/month\d+/gi)[0].replace(/month/, ''),
       year = key.match(/year\d+/gi)[0].replace(/year/, ''),
-      allDay = calendar.querySelectorAll('span[data-day]');
+      allDay = document.querySelectorAll('span[data-day]');
 
 		if (!document.getElementById(el)) {
 			localStorage.removeItem(key);

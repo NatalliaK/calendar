@@ -80,6 +80,10 @@
 	padding-top: 80px;
 }
 
+.calendar-header:nth-of-type(n) {
+	padding-top: 40px;
+}
+
 @font-face {
 	font-family: "ElMessiri-SemiBold";
 	src: url("../fonts/ElMessiri-SemiBold.ttf");
