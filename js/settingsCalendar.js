@@ -96,19 +96,24 @@ function settingsCalendar() {
 
   function setScript(value) {
     document.querySelector('#output').innerText =
-      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
+      '<link rel="stylesheet" src="https://github.com/NatalliaK/calendar/blob/master/style/calendar.css">\n' +
+			'\n' +
+			'//"<link>" for tag "<header>"\n' +
+			'\n' +
+			'\n' +
+			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
       '<script src="https://github.com/NatalliaK/calendar/blob/master/js/localStorage.js"></script>\n' +
       '<script >\n' +
-      '(function()\n' +
-      '{var id = "' +
+      '(function(){\n' +
+			'var id = "' +
       value.el +
       '";\n' +
-      ' document.write(\'<div id=" + id + "></div>);\n' +
+      ' document.write("<div id=" + id + "></div>");\n' +
       '\t\t\t  new drawInteractiveCalendar({\n' +
       '\t\t\t    el: ' +
       value.el +
       ',\n' +
-      '\t\t\t    showMonth: ' +
+      '\t\t\t    changeMonth: ' +
       value.changeMonth +
       ',\n' +
       '\t\t\t    allowAdd: ' +
@@ -117,13 +122,18 @@ function settingsCalendar() {
       '\t\t\t    allowRemove: ' +
       value.allowRemove +
       ',\n' +
+			'\t\t\t    displayData: ' +
+			value.displayData +
+			',\n' +
       '\t\t\t    month: ' +
       value.month +
       ',\n' +
       '\t\t\t		 year: ' +
       value.year +
       '\n' +
-      '\t\t\t  })})();\n' +
+      '\t\t\t  })\n' +
+			'getLocalStorageValue();\n' +
+			'})();\n' +
       '</script>';
   }
 }

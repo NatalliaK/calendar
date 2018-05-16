@@ -157,7 +157,7 @@ function getNextMonth(htmlEl, month, year, htmlElHeader, value) {
 
 function createCalendarHeader(htmlEl) {
   var calendarHeader = document.createElement('div');
-  calendarHeader.id = 'calendar-header';
+  calendarHeader.id = htmlEl.id + '-header';
   calendarHeader.classList = 'calendar-header';
   htmlEl.parentNode.insertBefore(calendarHeader, htmlEl);
 }
@@ -177,14 +177,13 @@ function drawInteractiveCalendar(value) {
     month = currentMonth;
   }
 
+  var id = htmlEl.id + '-header';
   if (
-    (!document.querySelector('#calendar-header') && changeMonth) ||
-    displayData
-  ) {
+    (!document.getElementById(htmlEl.id + '-header') && changeMonth) || !document.getElementById(htmlEl.id + '-header') && displayData) {
     createCalendarHeader(htmlEl);
   }
 
-  var htmlElHeader = document.querySelector('#calendar-header');
+  var htmlElHeader = document.getElementById(htmlEl.id + '-header');
   drawCalendar(year, month, htmlEl);
 
   if (displayData && !changeMonth) {
@@ -324,7 +323,6 @@ function addEvent(value) {
 
           confirm.id = 'confirm';
           confirm.classList = 'task';
-          console.log(userTask);
           confirm.setAttribute('data-el', userTask.getAttribute('data-el'));
           confirm.setAttribute('data-num', userTask.getAttribute('data-num'));
           confirm.setAttribute('data-day', userTask.getAttribute('data-day'));
