@@ -113,20 +113,28 @@ function settingsCalendar() {
 
   function setScript(value) {
     document.querySelector('#output').innerText =
-      '<link rel="stylesheet" src="https://github.com/NatalliaK/calendar/blob/master/style/calendar.css">\n' +
+      '<link rel="stylesheet" href="https://github.com/NatalliaK/calendar/blob/master/style/header.css">\n' +
+      '<link rel="stylesheet" href="https://github.com/NatalliaK/calendar/blob/master/style/total.css">\n' +
+      '<link rel="stylesheet" href="https://github.com/NatalliaK/calendar/blob/master/style/btn-auth-page.css">\n' +
+      '<link rel="preload" href="https://github.com/NatalliaK/calendar/blob/master/style/auth.css"\n' +
+      '\t\t\t\tas="style" onload="rel=\'stylesheet\'">\n' +
+      '<link rel="preload" href="https://github.com/NatalliaK/calendar/blob/master/style/btn-close.css"\n' +
+      '\t\t\t\tas="style" onload="rel=\'stylesheet\'">\n' +
+      '<link rel="stylesheet" href="https://github.com/NatalliaK/calendar/blob/master/style/calendar.css">\n' +
+      '<link rel="stylesheet" href="https://github.com/NatalliaK/calendar/blob/master/style/task.css">\n' +
       '\n' +
       '//"<link>" for tag "<header>"\n' +
       '\n' +
       '\n' +
-			'<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>' +
-			'<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>' +
-			'<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-database.js"></script>' +
-			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/drawBtnForm.js"></script>' +
-			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/drawAuthForm.js"></script>' +
-			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/firebaseInit.js"></script>' +
-			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/database.js"></script>' +
+      '<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>\n' +
+      '<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>\n' +
+      '<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-database.js"></script>\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/drawBtnForm.js"></script>\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/drawAuthForm.js"></script>\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/firebaseInit.js"></script>\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/database.js"></script>\n' +
       '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
-			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/firebase.js"></script>\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/firebase.js"></script>\n' +
       '<script src="https://github.com/NatalliaK/calendar/blob/master/js/storage.js"></script>\n' +
       '<script >\n' +
       '(function(){\n' +
