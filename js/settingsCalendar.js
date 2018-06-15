@@ -2,6 +2,7 @@ function settingsCalendar() {
   var form = document.querySelector('#settingsCalendar'),
     previewCalendar = document.querySelector('#previewCalendar'),
     createCalendar = document.querySelector('#createCalendar'),
+    wrapRadio = document.querySelector('#wrap-radio'),
     selectMonthValue = null,
     selectYearValue = null,
     value = {
@@ -11,7 +12,8 @@ function settingsCalendar() {
       allowRemove: true,
       displayData: false,
       year: null,
-      month: null
+      month: null,
+      database: 'localStorage'
     };
 
   form.addEventListener('change', function(e) {
@@ -31,14 +33,27 @@ function settingsCalendar() {
 
       if (form.querySelector('input[value="addTasks"]').checked) {
         value.allowAdd = true;
+        if (wrapRadio.classList.contains('disabled')) {
+          wrapRadio.classList.remove('disabled');
+        }
       } else {
         value.allowAdd = false;
+        wrapRadio.classList.add('disabled');
       }
 
       if (form.querySelector('input[value="removeTasks"]').checked) {
         value.allowRemove = true;
       } else {
         value.allowRemove = false;
+      }
+
+      if (
+        form.querySelector('input[type="radio"]:checked') &&
+        !wrapRadio.classList.contains('disabled')
+      ) {
+        value.database = form.querySelector(
+          'input[type="radio"]:checked'
+        ).value;
       }
 
       if (form.querySelector('input[value="displayData"]').checked) {
@@ -97,19 +112,18 @@ function settingsCalendar() {
   function setScript(value) {
     document.querySelector('#output').innerText =
       '<link rel="stylesheet" src="https://github.com/NatalliaK/calendar/blob/master/style/calendar.css">\n' +
-			'\n' +
-			'//"<link>" for tag "<header>"\n' +
-			'\n' +
-			'\n' +
-			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
-      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/localStorage.js"></script>\n' +
+      '\n' +
+      '//"<link>" for tag "<header>"\n' +
+      '\n' +
+      '\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
+      '<script src="https://github.com/NatalliaK/calendar/blob/master/js/storage.js"></script>\n' +
       '<script >\n' +
       '(function(){\n' +
-			'var id = "' +
+      'var id = "' +
       value.el +
       '";\n' +
-      ' document.write("<div id=" + id + "></div>");\n' +
-      '\t\t\t  new drawInteractiveCalendar({\n' +
+      'var value = {\n' +
       '\t\t\t    el: ' +
       value.el +
       ',\n' +
@@ -122,18 +136,23 @@ function settingsCalendar() {
       '\t\t\t    allowRemove: ' +
       value.allowRemove +
       ',\n' +
-			'\t\t\t    displayData: ' +
-			value.displayData +
-			',\n' +
+      '\t\t\t    displayData: ' +
+      value.displayData +
+      ',\n' +
       '\t\t\t    month: ' +
       value.month +
       ',\n' +
       '\t\t\t		 year: ' +
       value.year +
+      ',\n' +
+      '\t\t\t   database: ' +
+      value.database +
       '\n' +
-      '\t\t\t  })\n' +
-			'getLocalStorageValue();\n' +
-			'})();\n' +
+      '\t\t\t  };\n' +
+      ' document.write("<div id=" + id + "></div>");\n' +
+      '\t\t\t  new drawInteractiveCalendar(value);\n' +
+      'getStorageValue(value);\n' +
+      '})();\n' +
       '</script>';
   }
 }

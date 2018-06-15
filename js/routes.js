@@ -1,21 +1,20 @@
-var calendar = document.querySelector('#calendar');
-
 var routes = {
   '': function() {
     document.querySelector('#createCalendar').innerHTML = '';
     document.querySelector('#about').innerHTML = '';
 
     var value = {
-      el: calendar,
+      el: 'calendar',
       changeMonth: true,
       allowAdd: true,
       allowRemove: true,
       year: currentYear,
-      month: currentMonth
+      month: currentMonth,
+      database: 'localStorage'
     };
 
     drawInteractiveCalendar(value);
-    getLocalStorageValue();
+    getStorageValue(value);
   },
   calendar: function() {
     document.querySelector('#createCalendar').innerHTML = '';
@@ -27,11 +26,12 @@ var routes = {
       allowAdd: true,
       allowRemove: true,
       year: currentYear,
-      month: currentMonth
+      month: currentMonth,
+      database: 'localStorage'
     };
 
     drawInteractiveCalendar(value);
-    getLocalStorageValue();
+    getStorageValue(value);
   },
   createCalendar: function() {
     calendar.innerHTML = '';

@@ -1,8 +1,7 @@
 .task {
 	position: absolute;
-	top: 0;
-	left: 50%;
-	transform: translateX(-50%);
+	bottom: 50%;
+	transform: translate(50%, 50%);
 
 	margin: auto;
 	padding: 30px;

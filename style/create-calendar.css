@@ -59,10 +59,22 @@
 	 color: #364609;
  }
 
+ .create-calendar__wrap-radio {
+	 margin: 10px 0 10px 20px;
+	 border-top: 1px dotted grey;
+	 border-bottom: 1px dotted grey;
+ }
+
 .preview-calendar {
 	position: relative;
 
 	margin: 0 auto 40px;
+}
+
+.disabled {
+	pointer-events: none;
+	cursor: default;
+	opacity: 0.5;
 }
 
 @font-face {
