@@ -97,10 +97,12 @@ function settingsCalendar() {
 
     setScript(value);
     drawPrevCalendar(value);
+    getStorageValue(value);
   });
 
   setScript(value);
   drawPrevCalendar(value);
+  getStorageValue(value);
 
   function drawPrevCalendar(value) {
     previewCalendar.innerHTML = '<div id="' + value.el + '">';
