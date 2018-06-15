@@ -132,7 +132,7 @@ function getPrevMonth(htmlEl, month, year, htmlElHeader, value) {
     value.year = year;
     date = new Date(year, month);
     drawInteractiveCalendar(value);
-    getLocalStorageValue();
+    getStorageValue(value);
     return date;
   });
 }
@@ -150,7 +150,7 @@ function getNextMonth(htmlEl, month, year, htmlElHeader, value) {
 
     date = new Date(year, month);
     drawInteractiveCalendar(value);
-    getLocalStorageValue();
+    getStorageValue(value);
     return date;
   });
 }
@@ -163,11 +163,12 @@ function createCalendarHeader(htmlEl) {
 }
 
 function drawInteractiveCalendar(value) {
-  var htmlEl = document.getElementById(value.el) || value.el;
-  var year = value.year;
-  var month = value.month;
-  var changeMonth = value.changeMonth;
-  var displayData = value.displayData;
+  var htmlEl = document.getElementById(value.el) || value.el,
+    year = value.year,
+    month = value.month,
+    database = value.database,
+    changeMonth = value.changeMonth,
+    displayData = value.displayData;
 
   if (!year) {
     year = currentYear;
@@ -179,7 +180,9 @@ function drawInteractiveCalendar(value) {
 
   var id = htmlEl.id + '-header';
   if (
-    (!document.getElementById(htmlEl.id + '-header') && changeMonth) || !document.getElementById(htmlEl.id + '-header') && displayData) {
+    (!document.getElementById(htmlEl.id + '-header') && changeMonth) ||
+    (!document.getElementById(htmlEl.id + '-header') && displayData)
+  ) {
     createCalendarHeader(htmlEl);
   }
 
@@ -208,6 +211,7 @@ function addEvent(value) {
   var htmlEl = document.getElementById(value.el) || value.el,
     allowAddTasks = value.allowAdd,
     allowRemoveTasks = value.allowRemove,
+    database = value.database,
     targetData,
     targetTd;
 
@@ -252,7 +256,6 @@ function addEvent(value) {
             targetTd.appendChild(wrap);
             i = 1;
           } else {
-            console.log(targetData);
             var len = targetData.parentNode.querySelectorAll('[data-num]')
               .length;
             i = len + 1;
@@ -276,27 +279,69 @@ function addEvent(value) {
             ' year' +
             targetYear;
 
-          function setLocalStorage() {
-            return new Promise(function(resolve) {
-              setTimeout(function() {
-                localStorage.setItem(keyName, inputValue);
-                if (localStorage.getItem(keyName)) {
-                  resolve();
-                }
-              }, 10);
+          if (database === 'localStorage') {
+            function setStorage() {
+              return new Promise(function(resolve) {
+                setTimeout(function() {
+                  if (database === 'localStorage') {
+                    localStorage.setItem(keyName, inputValue);
+                    if (localStorage.getItem(keyName)) {
+                      resolve();
+                    }
+                  }
+                }, 10);
+              });
+            }
+
+            setStorage().then(function() {
+              userTask.innerHTML =
+                '<p class="user-task__p">' + inputValue + '</p>';
+              targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
+
+              if (allowRemoveTasks) {
+                userTask.innerHTML +=
+                  '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
+              }
             });
+          } else if (database === 'firebase') {
+            var uid = htmlEl.parentNode
+              .querySelector('.btn-auth-page__p')
+              .getAttribute('data-name');
+            var folder = '/tasks/';
+            var obj = {
+              [keyName]: inputValue
+            };
+
+            var path = uid + '/' + keyName;
+
+            var method = 'PUT';
+
+            setData(method, folder, path, obj)
+              .then(function(response) {
+                return response.json();
+              })
+              .then(tasks => {
+                getData(folder, path)
+                  .then(function(response) {
+                    return response.json();
+                  })
+                  .then(function(database) {
+                    for (var key in database) {
+                      userTask.innerHTML =
+                        '<p class="user-task__p">' + database[key] + '</p>';
+                      targetTd
+                        .querySelector('.user-tasks-wrap')
+                        .appendChild(userTask);
+
+                      if (allowRemoveTasks) {
+                        userTask.innerHTML +=
+                          '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
+                      }
+                    }
+                  });
+              });
           }
 
-          setLocalStorage().then(function() {
-            userTask.innerHTML =
-              '<p class="user-task__p">' + inputValue + '</p>';
-            targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
-
-            if (allowRemoveTasks) {
-              userTask.innerHTML +=
-                '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
-            }
-          });
           document.querySelector('#task').remove();
         }
       }
@@ -351,47 +396,41 @@ function addEvent(value) {
           ' year' +
           parentDiv.getAttribute('data-year');
 
-        function delTask() {
-          return new Promise(function(resolve) {
-            setTimeout(function() {
-              localStorage.removeItem(keyName);
+        if (database === 'localStorage') {
+          function delTask() {
+            return new Promise(function(resolve) {
+              setTimeout(function() {
+                localStorage.removeItem(keyName);
 
-              if (!localStorage.getItem(keyName)) {
-                resolve();
-              }
-            }, 10);
+                if (!localStorage.getItem(keyName)) {
+                  resolve();
+                }
+              }, 10);
+            });
+          }
+
+          delTask().then(function() {
+            delEl(htmlEl, parentDiv);
+          });
+        } else if (database === 'firebase') {
+          var folder = '/tasks/';
+          let uid = htmlEl.parentNode
+            .querySelector('.btn-auth-page__p')
+            .getAttribute('data-name');
+          path = uid + '/' + keyName;
+          var methodDel = 'DELETE';
+
+          delData(methodDel, folder, path).then(function() {
+            delEl(htmlEl, parentDiv);
           });
         }
-
-        delTask().then(function() {
-          var el = htmlEl.querySelector(
-            'div[data-el="' +
-              parentDiv.getAttribute('data-el') +
-              '"][data-num="' +
-              parentDiv.getAttribute('data-num') +
-              '"][data-month="' +
-              parentDiv.getAttribute('data-month') +
-              '"][data-day="' +
-              parentDiv.getAttribute('data-day') +
-              '"][data-year="' +
-              parentDiv.getAttribute('data-year') +
-              '"]'
-          );
-          var parentEl = el.parentNode;
-
-          el.remove();
-
-          if (parentEl.innerHTML === '') {
-            parentEl.remove();
-          }
-        });
         parentDiv.remove();
       }
 
       if (target === htmlEl.querySelector('#cancelRemove')) {
         htmlEl.querySelector('#confirm').remove();
       }
-    }.bind(value)
+    }
   );
 }
 
@@ -405,5 +444,28 @@ function askQuestion(htmlEl) {
     task.innerHTML =
       '<label><p class="task__p">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
     htmlEl.appendChild(task);
+  }
+}
+
+function delEl(htmlEl, contTask) {
+  var el = htmlEl.querySelector(
+    'div[data-el="' +
+      contTask.getAttribute('data-el') +
+      '"][data-num="' +
+      contTask.getAttribute('data-num') +
+      '"][data-month="' +
+      contTask.getAttribute('data-month') +
+      '"][data-day="' +
+      contTask.getAttribute('data-day') +
+      '"][data-year="' +
+      contTask.getAttribute('data-year') +
+      '"]'
+  );
+  var parentEl = el.parentNode;
+
+  el.remove();
+
+  if (parentEl.innerHTML === '') {
+    parentEl.remove();
   }
 }
