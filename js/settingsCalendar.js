@@ -118,7 +118,15 @@ function settingsCalendar() {
       '//"<link>" for tag "<header>"\n' +
       '\n' +
       '\n' +
+			'<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-app.js"></script>' +
+			'<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-auth.js"></script>' +
+			'<script src="https://www.gstatic.com/firebasejs/5.0.4/firebase-database.js"></script>' +
+			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/drawBtnForm.js"></script>' +
+			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/drawAuthForm.js"></script>' +
+			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/firebaseInit.js"></script>' +
+			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/database.js"></script>' +
       '<script src="https://github.com/NatalliaK/calendar/blob/master/js/calendar.js"></script>\n' +
+			'<script src="https://github.com/NatalliaK/calendar/blob/master/js/firebase.js"></script>\n' +
       '<script src="https://github.com/NatalliaK/calendar/blob/master/js/storage.js"></script>\n' +
       '<script >\n' +
       '(function(){\n' +
