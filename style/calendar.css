@@ -5,7 +5,7 @@
 	width: 55%;
 }
 
-.calendar-header__btn {
+.calendar-header__control {
 	position: absolute;
 	bottom: -13px;
 
@@ -13,21 +13,21 @@
 	background-color: transparent;
 }
 
-.calendar-header__btn:hover,
-.calendar-header__btn:focus {
+.calendar-header__control:hover,
+.calendar-header__control:focus {
 	border: none;
 	outline: none;
 }
 
-.calendar-header__btn--prev {
+.calendar-header__control--prev {
 	left: 0;
 }
 
-.calendar-header__btn--next {
+.calendar-header__control--next {
 	right: 0;
 }
 
-.calendar-header__span {
+.calendar-header__header-date {
 	display: block;
 
 	text-align: center;
@@ -62,7 +62,7 @@
 	font-size: 18px;
 }
 
-.calendar__cell {
+.calendar__item {
 	min-width: 60px;
 	width: calc(100% / 7);
 	min-height: 30px;
@@ -72,7 +72,7 @@
 	color: #364609;
 }
 
-.calendar__cell--header {
+.calendar__item--header {
 	background-color: lightgreen;
 }
 

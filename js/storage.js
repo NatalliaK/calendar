@@ -93,7 +93,7 @@ function getStorageValue(value) {
         if (storage === 'localStorage') {
           valueLocStorage(key).then(function(value) {
             userTask.innerHTML =
-              '<p class="user-task__p">' +
+              '<p class="user-task__text">' +
               value +
               '</p><button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
             wrap.appendChild(userTask);
@@ -101,7 +101,7 @@ function getStorageValue(value) {
         } else if (storage === 'firebase') {
           wrap.appendChild(userTask);
           userTask.innerHTML =
-            '<p class="user-task__p">' +
+            '<p class="user-task__text">' +
             dataUser +
             '</p><button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
         }

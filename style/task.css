@@ -14,7 +14,7 @@
 	box-shadow: 0 0 3px grey;
 }
 
-.task__p {
+.task__text {
 	margin-bottom: 20px;
 
 	font-family: "Ubuntu-BoldItalic", cursive;
@@ -69,7 +69,7 @@
 	border-collapse: collapse;
 }
 
-.user-task__p {
+.user-task__text {
 	padding: 5px 10px 5px 5px;
 	margin: 0;
 
