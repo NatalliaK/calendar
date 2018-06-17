@@ -34,7 +34,7 @@ function initAuth(htmlEl) {
               .then(() => {
                 alert('Выход пользователя.');
                 cont
-                  .querySelector('.btn-auth-page__p')
+                  .querySelector('.btn-auth-page__text')
                   .setAttribute('data-name', 'null');
               })
               .catch(error => alert('Ошибка выхода.'));
@@ -52,7 +52,7 @@ function initAuth(htmlEl) {
           .classList.add('hide');
       }
 
-      cont.querySelector('.btn-auth-page__p').setAttribute('data-name', uid);
+      cont.querySelector('.btn-auth-page__text').setAttribute('data-name', uid);
       writeGreetingText(user, cont.querySelector('[data-name="' + uid + '"]'));
     } else {
       writeGreetingText(user, cont.querySelector('[data-name="null"]'));
@@ -133,7 +133,7 @@ function logIn(el) {
     .then(user => {
       var uid = user.user.uid;
       el.querySelector('[data-auth="auth-form-wrap"]').classList.add('hide');
-      el.querySelector('.btn-auth-page__p').setAttribute('data-name', uid);
+      el.querySelector('.btn-auth-page__text').setAttribute('data-name', uid);
     })
     .catch(error => {
       console.log(error.code);

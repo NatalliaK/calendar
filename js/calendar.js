@@ -63,17 +63,17 @@ function drawCalendar(year, month, htmlEl) {
     if (count === 0) {
       elem.forEach(function(el) {
         result +=
-          '<th class="calendar__cell calendar__cell--header">' + el + '</th>';
+          '<th class="calendar__item calendar__item--header">' + el + '</th>';
       });
       result += '</tr>';
     } else {
       result += '<tr class="calendar__row">';
       elem.forEach(function(el) {
         if (!el) {
-          result += '<td class="calendar__cell"></td>';
+          result += '<td class="calendar__item"></td>';
         } else {
           result +=
-            '<td class="calendar__cell"><span data-el="' +
+            '<td class="calendar__item"><span data-el="' +
             htmlEl.id +
             '" data-day="' +
             el +
@@ -112,11 +112,11 @@ function writeMonthAndYear(year, month, htmlElHeader) {
   var writeMonth = date.toLocaleString('ru', { month: 'long' });
   var writeYear = date.toLocaleString('ru', { year: 'numeric' });
   htmlElHeader.innerHTML =
-    '<button data-btn="prev" class="btn calendar-header__btn  calendar-header__btn--prev"><img src="./img/prev.png" alt="previous"></button><span class="calendar-header__span">' +
+    '<button data-btn="prev" class="btn calendar-header__control  calendar-header__control--prev"><img src="./img/prev.png" alt="previous"></button><span class="calendar-header__header-date">' +
     writeMonth +
     ' ' +
     writeYear +
-    '</span><button data-btn="next" class="btn calendar-header__btn calendar-header__btn--next"><img src="./img/next.png" alt="next"></button>';
+    '</span><button data-btn="next" class="btn calendar-header__control calendar-header__control--next"><img src="./img/next.png" alt="next"></button>';
 }
 
 function getPrevMonth(htmlEl, month, year, htmlElHeader, value) {
@@ -233,7 +233,9 @@ function addEvent(value) {
             targetData = target;
             targetTd = targetData.parentNode;
           }
-          askQuestion(htmlEl);
+          if (database === 'localStorage' || database === 'firebase' && htmlEl.parentNode.querySelector('.btn-auth-page__text') && htmlEl.parentNode.querySelector('.btn-auth-page__text').getAttribute('data-name') !== 'null') {
+						askQuestion(htmlEl);
+					}
         }
 
         /** add task*/
@@ -295,7 +297,7 @@ function addEvent(value) {
 
             setStorage().then(function() {
               userTask.innerHTML =
-                '<p class="user-task__p">' + inputValue + '</p>';
+                '<p class="user-task__text">' + inputValue + '</p>';
               targetTd.querySelector('.user-tasks-wrap').appendChild(userTask);
 
               if (allowRemoveTasks) {
@@ -305,41 +307,43 @@ function addEvent(value) {
             });
           } else if (database === 'firebase') {
             var uid = htmlEl.parentNode
-              .querySelector('.btn-auth-page__p')
+              .querySelector('.btn-auth-page__text')
               .getAttribute('data-name');
-            var folder = '/tasks/';
-            var obj = {
-              [keyName]: inputValue
-            };
+            if (uid !== 'null') {
+							var folder = '/tasks/';
+							var obj = {
+								[keyName]: inputValue
+							};
 
-            var path = uid + '/' + keyName;
+							var path = uid + '/' + keyName;
 
-            var method = 'PUT';
+							var method = 'PUT';
 
-            setData(method, folder, path, obj)
-              .then(function(response) {
-                return response.json();
-              })
-              .then(tasks => {
-                getData(folder, path)
-                  .then(function(response) {
-                    return response.json();
-                  })
-                  .then(function(database) {
-                    for (var key in database) {
-                      userTask.innerHTML =
-                        '<p class="user-task__p">' + database[key] + '</p>';
-                      targetTd
-                        .querySelector('.user-tasks-wrap')
-                        .appendChild(userTask);
+							setData(method, folder, path, obj)
+								.then(function(response) {
+									return response.json();
+								})
+								.then(tasks => {
+									getData(folder, path)
+										.then(function(response) {
+											return response.json();
+										})
+										.then(function(database) {
+											for (var key in database) {
+												userTask.innerHTML =
+													'<p class="user-task__text">' + database[key] + '</p>';
+												targetTd
+													.querySelector('.user-tasks-wrap')
+													.appendChild(userTask);
 
-                      if (allowRemoveTasks) {
-                        userTask.innerHTML +=
-                          '<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
-                      }
-                    }
-                  });
-              });
+												if (allowRemoveTasks) {
+													userTask.innerHTML +=
+														'<button data-close="close" class="user-task__btn btn"><img src="./img/cross.png"></button>';
+												}
+											}
+										});
+								});
+						}
           }
 
           document.querySelector('#task').remove();
@@ -377,7 +381,7 @@ function addEvent(value) {
           );
           confirm.setAttribute('data-year', userTask.getAttribute('data-year'));
           confirm.innerHTML =
-            '<p class="task__p">Точно удалить задание?</p><p class="task__p">Может все-таки задачки порешаем?</p><button id="deleteTask" class="task__btn btn">Удалить</button><button id="cancelRemove" class="task__btn btn">Отмена</button>';
+            '<p class="task__text">Точно удалить задание?</p><p class="task__text">Может все-таки задачки порешаем?</p><button id="deleteTask" class="task__btn btn">Удалить</button><button id="cancelRemove" class="task__btn btn">Отмена</button>';
           htmlEl.appendChild(confirm);
         }
       }
@@ -415,7 +419,7 @@ function addEvent(value) {
         } else if (database === 'firebase') {
           var folder = '/tasks/';
           let uid = htmlEl.parentNode
-            .querySelector('.btn-auth-page__p')
+            .querySelector('.btn-auth-page__text')
             .getAttribute('data-name');
           path = uid + '/' + keyName;
           var methodDel = 'DELETE';
@@ -442,7 +446,7 @@ function askQuestion(htmlEl) {
     task.id = 'task';
     task.classList = 'task';
     task.innerHTML =
-      '<label><p class="task__p">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
+      '<label><p class="task__text">Что собираетесь делать?</p><input id="task-input" class="task__input" type="text" placeholder="Решать задачки" autofocus></label><button id="addTask" class="task__btn btn">Готово</button><button id="cancelTask" class="task__btn btn">Отмена</button>';
     htmlEl.appendChild(task);
   }
 }

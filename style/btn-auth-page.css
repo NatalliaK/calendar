@@ -1,13 +1,13 @@
 .btn-auth-page {
 	display: flex;
 	justify-content: space-around;
-	padding: 10% 0 0;
+	padding: 10% 0 10px;
 	align-items: center;
 	width: 70%;
 	margin: auto;
 }
 
-.btn-auth-page__p {
+.btn-auth-page__text {
 	color: #a6d83c;
 	font-family: "Philosopher-Italic", cursive;
 	line-height: 2.2em;
